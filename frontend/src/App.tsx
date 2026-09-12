@@ -8,6 +8,7 @@ import { ImportarPdf } from './pages/ImportarPdf';
 import { Login } from './pages/Login';
 import { MeusTreinos } from './pages/MeusTreinos';
 import { Progresso } from './pages/Progresso';
+import { ResumoSemana } from './pages/ResumoSemana';
 import { TreinoDoDia } from './pages/TreinoDoDia';
 
 function App() {
@@ -54,6 +55,14 @@ function App() {
             element={
               <RotaProtegida>
                 <Progresso />
+              </RotaProtegida>
+            }
+          />
+          <Route
+            path="/resumo-semana"
+            element={
+              <RotaProtegida>
+                <ResumoSemana />
               </RotaProtegida>
             }
           />

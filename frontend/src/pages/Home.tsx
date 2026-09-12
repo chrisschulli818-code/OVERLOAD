@@ -28,6 +28,12 @@ export function Home() {
         >
           Progressão
         </Link>
+        <Link
+          to="/resumo-semana"
+          className="rounded-md bg-slate-800 hover:bg-slate-700 text-slate-100 font-semibold px-4 py-2 transition"
+        >
+          Resumo da Semana
+        </Link>
         {usuario?.role === 'ADMIN' && (
           <Link
             to="/admin"

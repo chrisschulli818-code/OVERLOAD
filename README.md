@@ -57,5 +57,9 @@ Sobe em `http://localhost:5173` (proxy `/api` -> backend na 3333).
   - Tela `/progresso`: filtro por exercício e período (30/90/180 dias ou
     tudo), dois gráficos de linha (Recharts) de eixo único — peso máximo
     e volume total por dia — com tooltip ao passar o mouse.
-- [ ] Passo 7: boneco SVG de grupos musculares
+- [x] Passo 7: boneco SVG de grupos musculares
+  - Tela `/resumo-semana`: boneco SVG (frente + costas) que se adapta ao
+    sexo do usuário, com cada grupo muscular colorido proporcionalmente
+    ao volume (nº de séries) realizado na semana atual; tooltip ao
+    passar o mouse e legenda com a contagem por grupo.
 - [ ] Passo 8: teste ponta a ponta

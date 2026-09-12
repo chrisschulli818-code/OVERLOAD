@@ -8,6 +8,7 @@ import { authRouter } from './routes/auth.routes';
 import { execucoesRouter } from './routes/execucoes.routes';
 import { pdfRouter } from './routes/pdf.routes';
 import { progressoRouter } from './routes/progresso.routes';
+import { resumoSemanaRouter } from './routes/resumoSemana.routes';
 import { treinosRouter } from './routes/treinos.routes';
 
 const app = express();
@@ -26,6 +27,7 @@ app.use('/api/treinos', treinosRouter);
 app.use('/api/pdf', pdfRouter);
 app.use('/api/execucoes', execucoesRouter);
 app.use('/api/progresso', progressoRouter);
+app.use('/api/resumo-semana', resumoSemanaRouter);
 
 const errorHandler: ErrorRequestHandler = (err, _req, res, next) => {
   if (err instanceof multer.MulterError || err instanceof Error) {
