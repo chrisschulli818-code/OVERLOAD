@@ -10,6 +10,11 @@ RUN npm run build
 FROM node:20-slim AS runtime
 WORKDIR /app
 
+# node:20-slim (Debian) não vem com libssl — os binários nativos da Prisma
+# (schema engine/query engine) precisam disso, senão falham em runtime com
+# um erro genérico ("Schema engine error:") sem detalhe nenhum.
+RUN apt-get update -y && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
+
 # NODE_ENV=production só depois do build: se vier antes, o "npm ci" pula as
 # devDependencies (typescript, prisma CLI) e o build quebra com "tsc: not found".
 COPY backend/package.json backend/package-lock.json ./
