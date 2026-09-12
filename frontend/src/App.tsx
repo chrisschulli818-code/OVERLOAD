@@ -7,6 +7,7 @@ import { Home } from './pages/Home';
 import { ImportarPdf } from './pages/ImportarPdf';
 import { Login } from './pages/Login';
 import { MeusTreinos } from './pages/MeusTreinos';
+import { Progresso } from './pages/Progresso';
 import { TreinoDoDia } from './pages/TreinoDoDia';
 
 function App() {
@@ -45,6 +46,14 @@ function App() {
             element={
               <RotaProtegida>
                 <TreinoDoDia />
+              </RotaProtegida>
+            }
+          />
+          <Route
+            path="/progresso"
+            element={
+              <RotaProtegida>
+                <Progresso />
               </RotaProtegida>
             }
           />

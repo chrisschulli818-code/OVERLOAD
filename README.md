@@ -53,6 +53,9 @@ Sobe em `http://localhost:5173` (proxy `/api` -> backend na 3333).
   - Tela `/treino-do-dia`: seleciona dia da semana e data, mostra os
     exercícios planejados com uma linha por série (pré-preenchida com o
     planejado), registra/atualiza (upsert) ou exclui o que foi feito.
-- [ ] Passo 6: gráfico de progressão
+- [x] Passo 6: gráfico de progressão
+  - Tela `/progresso`: filtro por exercício e período (30/90/180 dias ou
+    tudo), dois gráficos de linha (Recharts) de eixo único — peso máximo
+    e volume total por dia — com tooltip ao passar o mouse.
 - [ ] Passo 7: boneco SVG de grupos musculares
 - [ ] Passo 8: teste ponta a ponta

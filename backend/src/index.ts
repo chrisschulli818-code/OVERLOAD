@@ -7,6 +7,7 @@ import { adminRouter } from './routes/admin.routes';
 import { authRouter } from './routes/auth.routes';
 import { execucoesRouter } from './routes/execucoes.routes';
 import { pdfRouter } from './routes/pdf.routes';
+import { progressoRouter } from './routes/progresso.routes';
 import { treinosRouter } from './routes/treinos.routes';
 
 const app = express();
@@ -24,8 +25,7 @@ app.use('/api/admin', adminRouter);
 app.use('/api/treinos', treinosRouter);
 app.use('/api/pdf', pdfRouter);
 app.use('/api/execucoes', execucoesRouter);
-
-// As rotas de progresso serão registradas aqui no próximo passo.
+app.use('/api/progresso', progressoRouter);
 
 const errorHandler: ErrorRequestHandler = (err, _req, res, next) => {
   if (err instanceof multer.MulterError || err instanceof Error) {

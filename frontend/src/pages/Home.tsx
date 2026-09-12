@@ -22,6 +22,12 @@ export function Home() {
         >
           Meus Treinos
         </Link>
+        <Link
+          to="/progresso"
+          className="rounded-md bg-slate-800 hover:bg-slate-700 text-slate-100 font-semibold px-4 py-2 transition"
+        >
+          Progressão
+        </Link>
         {usuario?.role === 'ADMIN' && (
           <Link
             to="/admin"
