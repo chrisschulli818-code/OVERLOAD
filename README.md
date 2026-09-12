@@ -43,7 +43,12 @@ Sobe em `http://localhost:5173` (proxy `/api` -> backend na 3333).
   - Tela `/treinos`: criar treino por dia da semana, adicionar/editar/excluir
     exercícios (nome, grupo muscular, séries, repetições, peso planejado).
   - Operações restritas ao dono do treino (ownership check no backend).
-- [ ] Passo 4: importação de PDF
+- [x] Passo 4: importação de PDF
+  - Tela `/treinos/importar-pdf`: upload de PDF, extração de texto via
+    `pdf-parse`, interpretação estruturada via API da Anthropic (Claude,
+    saída estruturada com Zod) e tela de revisão/edição antes de salvar.
+  - **Requer `ANTHROPIC_API_KEY` configurada em `backend/.env`** — sem ela,
+    a extração retorna um erro amigável explicando o que falta configurar.
 - [ ] Passo 5: registro de execução diária
 - [ ] Passo 6: gráfico de progressão
 - [ ] Passo 7: boneco SVG de grupos musculares

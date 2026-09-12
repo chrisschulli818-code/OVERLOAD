@@ -126,3 +126,50 @@ export async function excluirExercicio(exercicioId: string, usuarioId: string) {
   await garantirExercicioDoUsuario(exercicioId, usuarioId);
   await prisma.exercicio.delete({ where: { id: exercicioId } });
 }
+
+export interface DiaParaSalvar {
+  diaSemana: DiaSemana;
+  nomeTreino: string;
+  exercicios: Array<{
+    nome: string;
+    seriesPlanejadas?: number | null;
+    repeticoesPlanejadas?: number | null;
+    pesoPlanejado?: number | null;
+    grupoMuscular?: GrupoMuscular | null;
+  }>;
+}
+
+export async function salvarFichaDeTreino(usuarioId: string, dias: DiaParaSalvar[]) {
+  const idsCriados = await prisma.$transaction(async (tx) => {
+    const ids: string[] = [];
+    for (const dia of dias) {
+      const treino = await tx.treino.create({
+        data: {
+          usuarioId,
+          diaSemana: dia.diaSemana,
+          nomeTreino: dia.nomeTreino,
+        },
+      });
+      for (const [ordem, ex] of dia.exercicios.entries()) {
+        await tx.exercicio.create({
+          data: {
+            treinoId: treino.id,
+            nome: ex.nome,
+            grupoMuscular: ex.grupoMuscular ?? undefined,
+            seriesPlanejadas: ex.seriesPlanejadas ?? undefined,
+            repeticoesPlanejadas: ex.repeticoesPlanejadas ?? undefined,
+            pesoPlanejado: ex.pesoPlanejado ?? undefined,
+            ordem,
+          },
+        });
+      }
+      ids.push(treino.id);
+    }
+    return ids;
+  });
+
+  return prisma.treino.findMany({
+    where: { id: { in: idsCriados } },
+    include: { exercicios: { orderBy: { ordem: 'asc' } } },
+  });
+}

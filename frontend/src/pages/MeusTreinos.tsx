@@ -57,9 +57,17 @@ export function MeusTreinos() {
       <div className="max-w-3xl mx-auto space-y-6">
         <header className="flex items-center justify-between">
           <h1 className="text-2xl font-bold">Meus Treinos</h1>
-          <Link to="/" className="text-sm text-slate-400 hover:text-slate-100">
-            ← Voltar
-          </Link>
+          <div className="flex items-center gap-4">
+            <Link
+              to="/treinos/importar-pdf"
+              className="text-sm text-emerald-400 hover:text-emerald-300"
+            >
+              Importar de PDF
+            </Link>
+            <Link to="/" className="text-sm text-slate-400 hover:text-slate-100">
+              ← Voltar
+            </Link>
+          </div>
         </header>
 
         {erro && <p className="text-red-400 text-sm">{erro}</p>}

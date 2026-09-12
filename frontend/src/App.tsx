@@ -4,6 +4,7 @@ import { AuthProvider } from './context/AuthContext';
 import { AdminDashboard } from './pages/AdminDashboard';
 import { Cadastro } from './pages/Cadastro';
 import { Home } from './pages/Home';
+import { ImportarPdf } from './pages/ImportarPdf';
 import { Login } from './pages/Login';
 import { MeusTreinos } from './pages/MeusTreinos';
 
@@ -27,6 +28,14 @@ function App() {
             element={
               <RotaProtegida>
                 <MeusTreinos />
+              </RotaProtegida>
+            }
+          />
+          <Route
+            path="/treinos/importar-pdf"
+            element={
+              <RotaProtegida>
+                <ImportarPdf />
               </RotaProtegida>
             }
           />
