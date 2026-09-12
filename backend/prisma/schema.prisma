@@ -1,0 +1,87 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// SQLite não suporta enums nativos no Prisma; os valores válidos
+// são impostos em código (ver src/types/constants.ts):
+// Role: "ADMIN" | "USER"
+// Sexo: "MASCULINO" | "FEMININO"
+// GrupoMuscular: "PEITO" | "COSTAS" | "OMBROS" | "BICEPS" | "TRICEPS" |
+//   "ABDOMEN" | "GLUTEOS" | "QUADRICEPS" | "POSTERIOR_COXA" | "PANTURRILHA" | "ANTEBRACO"
+
+model Usuario {
+  id           String    @id @default(cuid())
+  nome         String
+  email        String    @unique
+  senhaHash    String
+  sexo         String?
+  role         String    @default("USER")
+  criadoEm     DateTime  @default(now())
+
+  codigoUsadoId String?       @unique
+  codigoUsado   CodigoAcesso? @relation("CodigoUsadoPor", fields: [codigoUsadoId], references: [id])
+
+  codigosGerados CodigoAcesso[] @relation("CodigosGeradosPor")
+  treinos        Treino[]
+}
+
+model CodigoAcesso {
+  id          String    @id @default(cuid())
+  codigo      String    @unique
+  criadoEm    DateTime  @default(now())
+  expiraEm    DateTime?
+  limiteUsos  Int       @default(1)
+  usosCount   Int       @default(0)
+
+  criadoPorId String
+  criadoPor   Usuario   @relation("CodigosGeradosPor", fields: [criadoPorId], references: [id])
+
+  usadoPor    Usuario?  @relation("CodigoUsadoPor")
+}
+
+model Treino {
+  id          String   @id @default(cuid())
+  usuarioId   String
+  usuario     Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  diaSemana   String
+  nomeTreino  String
+  criadoEm    DateTime @default(now())
+
+  exercicios  Exercicio[]
+
+  @@index([usuarioId])
+}
+
+model Exercicio {
+  id                   String   @id @default(cuid())
+  treinoId             String
+  treino               Treino   @relation(fields: [treinoId], references: [id], onDelete: Cascade)
+  nome                 String
+  grupoMuscular        String?
+  seriesPlanejadas     Int?
+  repeticoesPlanejadas Int?
+  pesoPlanejado        Float?
+  ordem                Int      @default(0)
+
+  registros            RegistroExecucao[]
+
+  @@index([treinoId])
+}
+
+model RegistroExecucao {
+  id               String    @id @default(cuid())
+  exercicioId      String
+  exercicio        Exercicio @relation(fields: [exercicioId], references: [id], onDelete: Cascade)
+  data             DateTime  @default(now())
+  serieNumero      Int       @default(1)
+  repeticoesFeitas Int
+  pesoUsado        Float
+
+  @@index([exercicioId])
+  @@index([data])
+}
