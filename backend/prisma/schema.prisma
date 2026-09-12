@@ -3,12 +3,14 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
-// SQLite não suporta enums nativos no Prisma; os valores válidos
-// são impostos em código (ver src/types/constants.ts):
+// Postgres suporta enums nativos, mas os campos abaixo continuam String
+// por simplicidade (evita gerar/manter tipos de enum no banco) — os
+// valores válidos são impostos em código (ver src/types/constants.ts):
 // Role: "ADMIN" | "USER"
 // Sexo: "MASCULINO" | "FEMININO"
 // GrupoMuscular: "PEITO" | "COSTAS" | "OMBROS" | "BICEPS" | "TRICEPS" |

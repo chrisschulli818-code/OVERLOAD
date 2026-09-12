@@ -3,7 +3,7 @@
 ## Stack
 - **Frontend**: React + Vite + TailwindCSS v4 + React Router + Recharts
 - **Backend**: Node.js + Express + TypeScript
-- **Banco**: SQLite via Prisma ORM
+- **Banco**: Postgres (Supabase) via Prisma ORM, em schema isolado (`overload`)
 - **Auth**: JWT em cookie httpOnly
 
 ## Estrutura
@@ -23,11 +23,12 @@ frontend já buildado.
 ```
 cd backend
 npm install
-copy .env.example .env   # ajuste JWT_SECRET e ANTHROPIC_API_KEY
-npm run prisma:migrate
+copy .env.example .env   # preencha DATABASE_URL/DIRECT_URL (Supabase), JWT_SECRET e ANTHROPIC_API_KEY
 npm run dev
 ```
-Sobe em `http://localhost:3333`.
+Sobe em `http://localhost:3333`. As tabelas já existem no Supabase (schema
+`overload`) — não é necessário rodar `npm run prisma:migrate` para o setup
+inicial, só quando o schema mudar no futuro.
 
 ### Frontend
 ```
@@ -77,6 +78,15 @@ Sobe em `http://localhost:5173` (proxy `/api` -> backend na 3333).
     importados via PDF não tinham grupo muscular, então nunca acendiam
     o boneco. A tela de revisão do PDF agora permite definir o grupo
     muscular de cada exercício antes de salvar.
+
+## Deploy e infraestrutura
+- Banco migrado de SQLite para Postgres no Supabase, num schema isolado
+  (`overload`) com uma role dedicada (`overload_app`) sem acesso a nenhum
+  outro schema do projeto — o projeto Supabase é compartilhado com outros
+  apps do usuário, então o isolamento por schema/role evita qualquer mistura
+  de dados.
+- Deploy preparado via Docker (Railway/Render) com o backend servindo o
+  frontend buildado — ver [DEPLOY.md](./DEPLOY.md).
 
 ## Pendências conhecidas
 - A extração real de PDF via IA depende de `ANTHROPIC_API_KEY` configurada

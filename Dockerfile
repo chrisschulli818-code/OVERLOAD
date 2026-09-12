@@ -21,7 +21,6 @@ COPY --from=frontend-build /app/frontend/dist ./public
 
 EXPOSE 3333
 
-# Aplica migrações pendentes e sobe o servidor. DATABASE_URL deve apontar
-# para um caminho dentro de um volume persistente (ex: file:/data/prod.db)
-# para o banco SQLite não ser perdido a cada deploy.
+# Aplica migrações pendentes (contra DIRECT_URL) e sobe o servidor. Banco é
+# Postgres externo (Supabase) — não precisa de volume persistente aqui.
 CMD ["sh", "-c", "npx prisma migrate deploy && node dist/index.js"]
