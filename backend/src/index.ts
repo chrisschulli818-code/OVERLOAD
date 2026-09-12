@@ -4,6 +4,7 @@ import express from 'express';
 import { env } from './config/env';
 import { adminRouter } from './routes/admin.routes';
 import { authRouter } from './routes/auth.routes';
+import { treinosRouter } from './routes/treinos.routes';
 
 const app = express();
 
@@ -17,8 +18,9 @@ app.get('/api/health', (_req, res) => {
 
 app.use('/api/auth', authRouter);
 app.use('/api/admin', adminRouter);
+app.use('/api/treinos', treinosRouter);
 
-// As rotas de treinos, execuções, progresso e pdf
+// As rotas de execuções, progresso e pdf
 // serão registradas aqui nos próximos passos de implementação.
 
 app.listen(env.port, () => {

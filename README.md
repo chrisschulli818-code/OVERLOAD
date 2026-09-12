@@ -39,7 +39,10 @@ Sobe em `http://localhost:5173` (proxy `/api` -> backend na 3333).
   - Demais cadastros exigem um código de convite válido gerado pelo admin.
   - Painel `/admin`: gerar códigos (com limite de usos e validade opcional),
     ver quais foram usados e por quem, e listar todos os usuários.
-- [ ] Passo 3: CRUD manual de treinos/exercícios
+- [x] Passo 3: CRUD manual de treinos/exercícios
+  - Tela `/treinos`: criar treino por dia da semana, adicionar/editar/excluir
+    exercícios (nome, grupo muscular, séries, repetições, peso planejado).
+  - Operações restritas ao dono do treino (ownership check no backend).
 - [ ] Passo 4: importação de PDF
 - [ ] Passo 5: registro de execução diária
 - [ ] Passo 6: gráfico de progressão

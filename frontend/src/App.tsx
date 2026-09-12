@@ -5,6 +5,7 @@ import { AdminDashboard } from './pages/AdminDashboard';
 import { Cadastro } from './pages/Cadastro';
 import { Home } from './pages/Home';
 import { Login } from './pages/Login';
+import { MeusTreinos } from './pages/MeusTreinos';
 
 function App() {
   return (
@@ -18,6 +19,14 @@ function App() {
             element={
               <RotaProtegida>
                 <Home />
+              </RotaProtegida>
+            }
+          />
+          <Route
+            path="/treinos"
+            element={
+              <RotaProtegida>
+                <MeusTreinos />
               </RotaProtegida>
             }
           />

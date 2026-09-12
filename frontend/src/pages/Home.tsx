@@ -10,6 +10,12 @@ export function Home() {
       <p className="text-slate-400">Olá, {usuario?.nome}!</p>
 
       <div className="flex gap-3">
+        <Link
+          to="/treinos"
+          className="rounded-md bg-slate-800 hover:bg-slate-700 text-slate-100 font-semibold px-4 py-2 transition"
+        >
+          Meus Treinos
+        </Link>
         {usuario?.role === 'ADMIN' && (
           <Link
             to="/admin"

@@ -4,6 +4,17 @@ export type Role = (typeof ROLES)[number];
 export const SEXOS = ['MASCULINO', 'FEMININO'] as const;
 export type Sexo = (typeof SEXOS)[number];
 
+export const DIAS_SEMANA = [
+  'Segunda',
+  'Terça',
+  'Quarta',
+  'Quinta',
+  'Sexta',
+  'Sábado',
+  'Domingo',
+] as const;
+export type DiaSemana = (typeof DIAS_SEMANA)[number];
+
 export const GRUPOS_MUSCULARES = [
   'PEITO',
   'COSTAS',
