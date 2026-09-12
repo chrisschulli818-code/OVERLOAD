@@ -23,7 +23,7 @@ model Usuario {
   role         String    @default("USER")
   criadoEm     DateTime  @default(now())
 
-  codigoUsadoId String?       @unique
+  codigoUsadoId String?
   codigoUsado   CodigoAcesso? @relation("CodigoUsadoPor", fields: [codigoUsadoId], references: [id])
 
   codigosGerados CodigoAcesso[] @relation("CodigosGeradosPor")
@@ -41,7 +41,7 @@ model CodigoAcesso {
   criadoPorId String
   criadoPor   Usuario   @relation("CodigosGeradosPor", fields: [criadoPorId], references: [id])
 
-  usadoPor    Usuario?  @relation("CodigoUsadoPor")
+  usadoPor    Usuario[] @relation("CodigoUsadoPor")
 }
 
 model Treino {

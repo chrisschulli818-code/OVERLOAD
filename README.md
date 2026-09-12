@@ -33,6 +33,15 @@ npm run dev
 Sobe em `http://localhost:5173` (proxy `/api` -> backend na 3333).
 
 ## Status
-Passo 1 (setup do projeto + Prisma) concluído. Próximos passos: autenticação
-e sistema de códigos de admin, CRUD de treinos, importação de PDF, registro
-de execução, gráficos de progressão e boneco SVG de grupos musculares.
+- [x] Passo 1: setup do projeto + Prisma
+- [x] Passo 2: autenticação + sistema de códigos de admin
+  - Primeiro usuário cadastrado no sistema vira ADMIN automaticamente (bootstrap).
+  - Demais cadastros exigem um código de convite válido gerado pelo admin.
+  - Painel `/admin`: gerar códigos (com limite de usos e validade opcional),
+    ver quais foram usados e por quem, e listar todos os usuários.
+- [ ] Passo 3: CRUD manual de treinos/exercícios
+- [ ] Passo 4: importação de PDF
+- [ ] Passo 5: registro de execução diária
+- [ ] Passo 6: gráfico de progressão
+- [ ] Passo 7: boneco SVG de grupos musculares
+- [ ] Passo 8: teste ponta a ponta
