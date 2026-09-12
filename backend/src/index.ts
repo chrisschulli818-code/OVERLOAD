@@ -1,3 +1,4 @@
+import path from 'node:path';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express, { type ErrorRequestHandler } from 'express';
@@ -12,6 +13,10 @@ import { resumoSemanaRouter } from './routes/resumoSemana.routes';
 import { treinosRouter } from './routes/treinos.routes';
 
 const app = express();
+
+// Necessário para cookies `secure` funcionarem atrás do proxy reverso
+// do Railway/Render (que termina o TLS antes de repassar para o app).
+app.set('trust proxy', 1);
 
 app.use(cors({ origin: env.frontendUrl, credentials: true }));
 app.use(express.json());
@@ -39,6 +44,17 @@ const errorHandler: ErrorRequestHandler = (err, _req, res, next) => {
   next(err);
 };
 app.use(errorHandler);
+
+// Em produção, o build do frontend é copiado para ./public e servido
+// pelo próprio backend — um único serviço para o deploy.
+const pastaFrontend = path.join(__dirname, '../public');
+app.use(express.static(pastaFrontend));
+app.get('*', (req, res, next) => {
+  if (req.path.startsWith('/api')) return next();
+  res.sendFile(path.join(pastaFrontend, 'index.html'), (err) => {
+    if (err) next();
+  });
+});
 
 app.listen(env.port, () => {
   console.log(`Backend rodando em http://localhost:${env.port}`);

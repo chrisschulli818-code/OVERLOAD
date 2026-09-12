@@ -12,6 +12,11 @@ backend/   # API Express + Prisma
 frontend/  # SPA React (Vite)
 ```
 
+## Deploy em produção
+Veja [DEPLOY.md](./DEPLOY.md) — o app é publicado como um único serviço
+Docker (Railway ou Render): o backend Express serve tanto a API quanto o
+frontend já buildado.
+
 ## Como rodar localmente (Windows, sem WSL/Docker)
 
 ### Backend
