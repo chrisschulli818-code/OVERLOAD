@@ -62,4 +62,18 @@ Sobe em `http://localhost:5173` (proxy `/api` -> backend na 3333).
     sexo do usuário, com cada grupo muscular colorido proporcionalmente
     ao volume (nº de séries) realizado na semana atual; tooltip ao
     passar o mouse e legenda com a contagem por grupo.
-- [ ] Passo 8: teste ponta a ponta
+- [x] Passo 8: teste ponta a ponta
+  - Fluxo completo validado no navegador: admin gera código → usuário se
+    cadastra com o código e sexo → importa PDF (extração simulada) →
+    revisa/edita (incluindo grupo muscular) → salva → registra execução
+    no treino do dia → acompanha gráfico de progressão → vê o boneco da
+    semana refletindo a série registrada.
+  - Durante o teste foi identificada e corrigida uma lacuna: exercícios
+    importados via PDF não tinham grupo muscular, então nunca acendiam
+    o boneco. A tela de revisão do PDF agora permite definir o grupo
+    muscular de cada exercício antes de salvar.
+
+## Pendências conhecidas
+- A extração real de PDF via IA depende de `ANTHROPIC_API_KEY` configurada
+  em `backend/.env` (o usuário confirmou que já possui a chave).
+- Não há tela de edição de perfil (ex: trocar sexo após o cadastro).

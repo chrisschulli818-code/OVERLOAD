@@ -2,8 +2,8 @@ import { AxiosError } from 'axios';
 import { useState, type ChangeEvent, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { extrairFichaDePdf, salvarFicha } from '../api/pdf';
-import { DIAS_SEMANA } from '../types/treino';
-import type { DiaSemana } from '../types/treino';
+import { DIAS_SEMANA, GRUPOS_MUSCULARES, GRUPO_MUSCULAR_LABEL } from '../types/treino';
+import type { DiaSemana, GrupoMuscular } from '../types/treino';
 import type { DiaExtraido, ExercicioExtraido, FichaExtraida } from '../types/importacao';
 
 function mensagemErro(err: unknown, fallback: string): string {
@@ -191,6 +191,22 @@ export function ImportarPdf() {
                         placeholder="Nome do exercício"
                         className="flex-1 min-w-[140px] rounded-md bg-slate-800 border border-slate-700 px-2 py-1.5 text-sm outline-none focus:border-emerald-500"
                       />
+                      <select
+                        value={ex.grupo_muscular ?? ''}
+                        onChange={(e) =>
+                          atualizarExercicio(diaIndex, exIndex, {
+                            grupo_muscular: e.target.value === '' ? null : (e.target.value as GrupoMuscular),
+                          })
+                        }
+                        className="rounded-md bg-slate-800 border border-slate-700 px-2 py-1.5 text-sm outline-none focus:border-emerald-500"
+                      >
+                        <option value="">Grupo muscular</option>
+                        {GRUPOS_MUSCULARES.map((g) => (
+                          <option key={g} value={g}>
+                            {GRUPO_MUSCULAR_LABEL[g]}
+                          </option>
+                        ))}
+                      </select>
                       <input
                         type="number"
                         min={0}
