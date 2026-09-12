@@ -6,24 +6,33 @@ API (`/api/*`) quanto os arquivos estáticos do frontend já buildado. O banco
 do seu projeto existente — não usa o schema `public`, que tem tabelas de
 outros apps seus.
 
-## 0. Pegar a connection string do Supabase
+## 0. Connection string do Supabase
 
 Já preparei o banco: criei o schema `overload` e uma role dedicada
 `overload_app` (com senha própria, sem acesso a nenhum outro schema do
-projeto). Falta só pegar a connection string certa no painel:
+projeto). A connection string a usar é a **conexão direta**:
 
-1. Acesse o [painel do Supabase](https://supabase.com/dashboard/project/lhghfuvkjueorksmnxyt) do projeto `chrisschulli818-code's Project`.
-2. Vá em **Project Settings → Database → Connection string**.
-3. Você vai precisar de **duas** strings, trocando o usuário `postgres` por `overload_app` e a senha pela senha da role (fornecida separadamente, fora deste repositório):
-   - **Transaction pooler** (porta `6543`) → vira a variável `DATABASE_URL` (usada nas queries do dia a dia).
-   - **Session pooler** (porta `5432`) → vira a variável `DIRECT_URL` (usada só para rodar migrações).
-4. Em **ambas**, acrescente `?schema=overload` no final da URL. Na `DATABASE_URL` (transaction pooler), acrescente também `&pgbouncer=true`.
+1. Acesse o [painel do Supabase](https://supabase.com/dashboard/project/lhghfuvkjueorksmnxyt) do projeto, clique em **Connect** e escolha o card **Direct**.
+2. Pegue o host (`db.lhghfuvkjueorksmnxyt.supabase.co`) e a porta (`5432`).
+3. Troque o usuário `postgres` pela role `overload_app` e a senha pela senha dela (fornecida separadamente, fora deste repositório), e acrescente `?schema=overload` no final.
 
-Exemplo do formato final (com host e senha fictícios):
 ```
-DATABASE_URL="postgresql://overload_app:SENHA@aws-0-us-west-2.pooler.supabase.com:6543/postgres?schema=overload&pgbouncer=true"
-DIRECT_URL="postgresql://overload_app:SENHA@aws-0-us-west-2.pooler.supabase.com:5432/postgres?schema=overload"
+DATABASE_URL="postgresql://overload_app:SENHA@db.lhghfuvkjueorksmnxyt.supabase.co:5432/postgres?schema=overload"
+DIRECT_URL="postgresql://overload_app:SENHA@db.lhghfuvkjueorksmnxyt.supabase.co:5432/postgres?schema=overload"
 ```
+
+(As duas variáveis apontam para a mesma URL aqui — só existem separadas no
+schema do Prisma para o caso de trocar `DATABASE_URL` por um pooler depois.)
+
+**Atenção — essa conexão direta usa IPv6.** Se o Railway (ou Render) não
+tiver saída IPv6, o deploy vai falhar com `Error: P1001 Can't reach database
+server`. Se isso acontecer:
+1. Volte no painel do Supabase → **Connect** → clique no card **ORM**.
+2. Copie a connection string do pooler que aparecer lá (geralmente porta
+   `6543`, host terminando em `.pooler.supabase.com`, com `&pgbouncer=true`
+   no final) e use nas duas variáveis (ou só na `DATABASE_URL`, mantendo a
+   `DIRECT_URL` como a conexão direta caso o Railway consiga alcançá-la só
+   para rodar as migrações).
 
 ## Passo a passo
 
@@ -38,8 +47,8 @@ DIRECT_URL="postgresql://overload_app:SENHA@aws-0-us-west-2.pooler.supabase.com:
 
      | Variável | Valor |
      |---|---|
-     | `DATABASE_URL` | a connection string do **Transaction pooler** (passo 0) |
-     | `DIRECT_URL` | a connection string do **Session pooler** (passo 0) |
+     | `DATABASE_URL` | a connection string montada no passo 0 |
+     | `DIRECT_URL` | a mesma connection string do passo 0 |
      | `JWT_SECRET` | uma string aleatória longa e secreta (ex: gere com `openssl rand -hex 32`) |
      | `ANTHROPIC_API_KEY` | sua chave da Anthropic (para a importação de PDF funcionar) |
      | `FRONTEND_URL` | a URL pública do próprio serviço (veja o passo 3 — pode voltar aqui depois de gerá-la) |
@@ -78,8 +87,8 @@ Os mesmos arquivos (`Dockerfile`, `.dockerignore`) funcionam no Render:
 ```bash
 docker build -t overload .
 docker run -p 3333:3333 \
-  -e DATABASE_URL="postgresql://overload_app:SENHA@HOST:6543/postgres?schema=overload&pgbouncer=true" \
-  -e DIRECT_URL="postgresql://overload_app:SENHA@HOST:5432/postgres?schema=overload" \
+  -e DATABASE_URL="postgresql://overload_app:SENHA@db.lhghfuvkjueorksmnxyt.supabase.co:5432/postgres?schema=overload" \
+  -e DIRECT_URL="postgresql://overload_app:SENHA@db.lhghfuvkjueorksmnxyt.supabase.co:5432/postgres?schema=overload" \
   -e JWT_SECRET="segredo-de-teste" \
   -e FRONTEND_URL="http://localhost:3333" \
   overload
