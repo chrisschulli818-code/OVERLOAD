@@ -10,29 +10,22 @@ outros apps seus.
 
 Já preparei o banco: criei o schema `overload` e uma role dedicada
 `overload_app` (com senha própria, sem acesso a nenhum outro schema do
-projeto). A connection string a usar é a **conexão direta**:
+projeto). Use a connection string do **pooler** (Supavisor) — é IPv4,
+compatível com qualquer plataforma de deploy (a conexão "Direct" do
+Supabase é IPv6-only, e nem todo provedor tem saída IPv6):
 
-1. Acesse o [painel do Supabase](https://supabase.com/dashboard/project/lhghfuvkjueorksmnxyt) do projeto, clique em **Connect** e escolha o card **Direct**.
-2. Pegue o host (`db.lhghfuvkjueorksmnxyt.supabase.co`) e a porta (`5432`).
-3. Troque o usuário `postgres` pela role `overload_app` e a senha pela senha dela (fornecida separadamente, fora deste repositório), e acrescente `?schema=overload` no final.
+1. Acesse o [painel do Supabase](https://supabase.com/dashboard/project/lhghfuvkjueorksmnxyt) do projeto, clique em **Connect** e escolha o card **ORM**.
+2. Selecione **Prisma** — ele mostra as duas strings já no formato certo (`DATABASE_URL` via pooler porta `6543`, `DIRECT_URL` via pooler porta `5432`).
+3. Em ambas, troque `postgres.lhghfuvkjueorksmnxyt` pela role `overload_app.lhghfuvkjueorksmnxyt` (mantém o sufixo do projeto — o pooler exige isso pra rotear certo) e `[YOUR-PASSWORD]` pela senha da role (fornecida separadamente, fora deste repositório). Acrescente `&schema=overload` no final de cada uma.
 
 ```
-DATABASE_URL="postgresql://overload_app:SENHA@db.lhghfuvkjueorksmnxyt.supabase.co:5432/postgres?schema=overload"
-DIRECT_URL="postgresql://overload_app:SENHA@db.lhghfuvkjueorksmnxyt.supabase.co:5432/postgres?schema=overload"
+DATABASE_URL="postgresql://overload_app.lhghfuvkjueorksmnxyt:SENHA@aws-0-us-west-2.pooler.supabase.com:6543/postgres?pgbouncer=true&schema=overload"
+DIRECT_URL="postgresql://overload_app.lhghfuvkjueorksmnxyt:SENHA@aws-0-us-west-2.pooler.supabase.com:5432/postgres?schema=overload"
 ```
 
-(As duas variáveis apontam para a mesma URL aqui — só existem separadas no
-schema do Prisma para o caso de trocar `DATABASE_URL` por um pooler depois.)
-
-**Atenção — essa conexão direta usa IPv6.** Se o Railway (ou Render) não
-tiver saída IPv6, o deploy vai falhar com `Error: P1001 Can't reach database
-server`. Se isso acontecer:
-1. Volte no painel do Supabase → **Connect** → clique no card **ORM**.
-2. Copie a connection string do pooler que aparecer lá (geralmente porta
-   `6543`, host terminando em `.pooler.supabase.com`, com `&pgbouncer=true`
-   no final) e use nas duas variáveis (ou só na `DATABASE_URL`, mantendo a
-   `DIRECT_URL` como a conexão direta caso o Railway consiga alcançá-la só
-   para rodar as migrações).
+Se por algum motivo o pooler não funcionar, a alternativa é a conexão
+direta (card **Direct** → host `db.lhghfuvkjueorksmnxyt.supabase.co`,
+porta `5432`) — só funciona se a plataforma de deploy tiver saída IPv6.
 
 ## Passo a passo
 
@@ -87,8 +80,8 @@ Os mesmos arquivos (`Dockerfile`, `.dockerignore`) funcionam no Render:
 ```bash
 docker build -t overload .
 docker run -p 3333:3333 \
-  -e DATABASE_URL="postgresql://overload_app:SENHA@db.lhghfuvkjueorksmnxyt.supabase.co:5432/postgres?schema=overload" \
-  -e DIRECT_URL="postgresql://overload_app:SENHA@db.lhghfuvkjueorksmnxyt.supabase.co:5432/postgres?schema=overload" \
+  -e DATABASE_URL="postgresql://overload_app.lhghfuvkjueorksmnxyt:SENHA@aws-0-us-west-2.pooler.supabase.com:6543/postgres?pgbouncer=true&schema=overload" \
+  -e DIRECT_URL="postgresql://overload_app.lhghfuvkjueorksmnxyt:SENHA@aws-0-us-west-2.pooler.supabase.com:5432/postgres?schema=overload" \
   -e JWT_SECRET="segredo-de-teste" \
   -e FRONTEND_URL="http://localhost:3333" \
   overload
