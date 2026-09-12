@@ -5,6 +5,7 @@ import multer from 'multer';
 import { env } from './config/env';
 import { adminRouter } from './routes/admin.routes';
 import { authRouter } from './routes/auth.routes';
+import { execucoesRouter } from './routes/execucoes.routes';
 import { pdfRouter } from './routes/pdf.routes';
 import { treinosRouter } from './routes/treinos.routes';
 
@@ -22,9 +23,9 @@ app.use('/api/auth', authRouter);
 app.use('/api/admin', adminRouter);
 app.use('/api/treinos', treinosRouter);
 app.use('/api/pdf', pdfRouter);
+app.use('/api/execucoes', execucoesRouter);
 
-// As rotas de execuções e progresso
-// serão registradas aqui nos próximos passos de implementação.
+// As rotas de progresso serão registradas aqui no próximo passo.
 
 const errorHandler: ErrorRequestHandler = (err, _req, res, next) => {
   if (err instanceof multer.MulterError || err instanceof Error) {

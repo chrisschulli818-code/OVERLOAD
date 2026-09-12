@@ -49,7 +49,10 @@ Sobe em `http://localhost:5173` (proxy `/api` -> backend na 3333).
     saída estruturada com Zod) e tela de revisão/edição antes de salvar.
   - **Requer `ANTHROPIC_API_KEY` configurada em `backend/.env`** — sem ela,
     a extração retorna um erro amigável explicando o que falta configurar.
-- [ ] Passo 5: registro de execução diária
+- [x] Passo 5: registro de execução diária
+  - Tela `/treino-do-dia`: seleciona dia da semana e data, mostra os
+    exercícios planejados com uma linha por série (pré-preenchida com o
+    planejado), registra/atualiza (upsert) ou exclui o que foi feito.
 - [ ] Passo 6: gráfico de progressão
 - [ ] Passo 7: boneco SVG de grupos musculares
 - [ ] Passo 8: teste ponta a ponta

@@ -11,6 +11,12 @@ export function Home() {
 
       <div className="flex gap-3">
         <Link
+          to="/treino-do-dia"
+          className="rounded-md bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold px-4 py-2 transition"
+        >
+          Treino do Dia
+        </Link>
+        <Link
           to="/treinos"
           className="rounded-md bg-slate-800 hover:bg-slate-700 text-slate-100 font-semibold px-4 py-2 transition"
         >
