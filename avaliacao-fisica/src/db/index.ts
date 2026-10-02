@@ -1,11 +1,6 @@
-import { drizzle } from 'drizzle-orm/node-postgres';
-import { Pool } from 'pg';
+import { neon } from '@neondatabase/serverless';
+import { drizzle } from 'drizzle-orm/neon-http';
 import * as schema from './schema';
 
-const globalForDb = globalThis as unknown as { pgPool?: Pool };
-
-const pool =
-  globalForDb.pgPool ?? new Pool({ connectionString: process.env.DATABASE_URL });
-if (process.env.NODE_ENV !== 'production') globalForDb.pgPool = pool;
-
-export const db = drizzle(pool, { schema });
+// Driver HTTP do Neon: funciona em ambiente serverless e atrás de proxies HTTPS.
+export const db = drizzle(neon(process.env.DATABASE_URL ?? ''), { schema });
