@@ -1,29 +1,43 @@
 import Link from 'next/link';
+import { connection } from 'next/server';
+import { DbError } from '@/components/DbError';
 import { ImcBadge } from '@/components/ImcBadge';
-import { mockAssessments, mockStudents } from '@/data/mock';
+import { listStudents, type StudentSummary } from '@/db/queries';
 
-const fmt = new Intl.DateTimeFormat('pt-BR');
+const fmt = new Intl.DateTimeFormat('pt-BR', { timeZone: 'UTC' });
 
-export default function Home() {
-  const rows = mockStudents.map((s) => {
-    const list = mockAssessments.filter((a) => a.studentId === s.id).sort((a, b) => +b.data - +a.data);
-    return { s, last: list[0], total: list.length };
-  });
+export default async function Home(props: PageProps<'/'>) {
+  await connection();
+  const sp = await props.searchParams;
+  const q = typeof sp.q === 'string' ? sp.q : '';
+
+  let rows: StudentSummary[];
+  try {
+    rows = await listStudents(q);
+  } catch (e) {
+    return <DbError error={e} />;
+  }
 
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold">Alunos</h1>
-          <p className="text-sm text-muted">{rows.length} alunos cadastrados</p>
+          <p className="text-sm text-muted">{rows.length} {rows.length === 1 ? 'aluno' : 'alunos'}{q && ` para “${q}”`}</p>
         </div>
-        <button className="btn">+ Novo aluno</button>
+        <Link href="/alunos/novo" className="btn">+ Novo aluno</Link>
       </div>
 
-      <input className="input max-w-sm" placeholder="Buscar por nome ou e-mail…" />
+      <form action="/" className="max-w-sm">
+        <input name="q" defaultValue={q} className="input" placeholder="Buscar por nome ou e-mail…" />
+      </form>
+
+      {rows.length === 0 && (
+        <p className="card text-sm text-muted">Nenhum aluno encontrado. Cadastre o primeiro em “Novo aluno”.</p>
+      )}
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {rows.map(({ s, last, total }) => (
+        {rows.map(({ student: s, last, total }) => (
           <Link key={s.id} href={`/alunos/${s.id}`} className="card block transition hover:border-accent">
             <div className="flex items-center gap-3">
               <span className="grid h-11 w-11 place-items-center rounded-full bg-accent-soft font-bold text-accent">

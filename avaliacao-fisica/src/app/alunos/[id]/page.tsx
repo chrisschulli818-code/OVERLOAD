@@ -1,16 +1,26 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ImcBadge } from '@/components/ImcBadge';
-import { mockAssessments, mockStudents } from '@/data/mock';
+import { connection } from 'next/server';
+import { DbError } from '@/components/DbError';
+import { getStudent, listAssessments } from '@/db/queries';
+import type { Assessment, Student } from '@/types';
 
-const fmt = new Intl.DateTimeFormat('pt-BR');
+const fmt = new Intl.DateTimeFormat('pt-BR', { timeZone: 'UTC' });
 const yn = (v: boolean, detail?: string | null) => (v ? `Sim${detail ? ` — ${detail}` : ''}` : 'Não');
 
 export default async function AlunoPage(props: PageProps<'/alunos/[id]'>) {
+  await connection();
   const { id } = await props.params;
-  const s = mockStudents.find((x) => x.id === id);
+  let s: Student | null;
+  let list: Assessment[];
+  try {
+    s = await getStudent(id);
+    list = s ? await listAssessments(id) : [];
+  } catch (e) {
+    return <DbError error={e} />;
+  }
   if (!s) notFound();
-  const list = mockAssessments.filter((a) => a.studentId === id).sort((a, b) => +b.data - +a.data);
   const last = list[0];
   const first = list[list.length - 1];
 

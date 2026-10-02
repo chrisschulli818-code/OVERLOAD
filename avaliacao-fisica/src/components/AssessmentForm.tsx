@@ -1,6 +1,8 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useActionState, useMemo, useState } from 'react';
+import { createAssessment, type FormState } from '@/app/actions';
+import { Field, FormMessage } from '@/components/FormParts';
 import { ImcBadge } from '@/components/ImcBadge';
 import type { DobrasCutaneas, Sexo } from '@/types';
 import { calcularAvaliacao } from '@/utils/calculations';
@@ -10,24 +12,18 @@ const num = (v: string): number | null => {
   return Number.isFinite(n) ? n : null;
 };
 
-const CIRC = ['Ombro', 'Tórax', 'Cintura', 'Abdominal', 'Quadril'];
-const CIRC_LR = ['Braço normal', 'Braço contraído', 'Antebraço', 'Coxa', 'Panturrilha'];
+const CIRC: [string, string][] = [['circOmbro', 'Ombro'], ['circTorax', 'Tórax'], ['circCintura', 'Cintura'], ['circAbdominal', 'Abdominal'], ['circQuadril', 'Quadril']];
+const CIRC_LR: [string, string][] = [['circBracoNormal', 'Braço normal'], ['circBracoContraido', 'Braço contraído'], ['circAntebraco', 'Antebraço'], ['circCoxa', 'Coxa'], ['circPanturrilha', 'Panturrilha']];
 const DOBRAS: [keyof DobrasCutaneas, string][] = [
   ['triceps', 'Tríceps'], ['peito', 'Peito'], ['axilarMedia', 'Axilar média'], ['subescapular', 'Subescapular'],
   ['abdominal', 'Abdominal'], ['supraIliaca', 'Supra-ilíaca'], ['coxa', 'Coxa'],
 ];
-const FOTOS = ['Anterior', 'Posterior', 'Lado esquerdo', 'Lado direito'];
+const dobraName = (k: string) => 'dobra' + k[0].toUpperCase() + k.slice(1);
+const FOTOS: [string, string][] = [['fotoAnterior', 'Anterior'], ['fotoPosterior', 'Posterior'], ['fotoLadoEsquerdo', 'Lado esquerdo'], ['fotoLadoDireito', 'Lado direito']];
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <label className="block space-y-1">
-      <span className="text-xs font-medium text-muted">{label}</span>
-      {children}
-    </label>
-  );
-}
-
-export function AssessmentForm({ sexo, idade }: { sexo: Sexo; idade: number }) {
+export function AssessmentForm({ studentId, sexo, idade }: { studentId: string; sexo: Sexo; idade: number }) {
+  const [state, action, pending] = useActionState<FormState, FormData>(createAssessment.bind(null, studentId), {});
+  const err = state.errors ?? {};
   const [altura, setAltura] = useState('');
   const [peso, setPeso] = useState('');
   const [dobras, setDobras] = useState<Record<string, string>>({});
@@ -42,25 +38,25 @@ export function AssessmentForm({ sexo, idade }: { sexo: Sexo; idade: number }) {
   );
 
   return (
-    <form className="grid gap-6 lg:grid-cols-[1fr_320px]" onSubmit={(e) => e.preventDefault()}>
+    <form action={action} className="grid gap-6 lg:grid-cols-[1fr_320px]">
       <div className="space-y-6">
         <section className="card grid gap-4 sm:grid-cols-3">
-          <Field label="Data da avaliação *"><input type="date" required className="input" /></Field>
-          <Field label="Altura (m)"><input inputMode="decimal" className="input" placeholder="1,75" value={altura} onChange={(e) => setAltura(e.target.value)} /></Field>
-          <Field label="Peso (kg)"><input inputMode="decimal" className="input" placeholder="70,0" value={peso} onChange={(e) => setPeso(e.target.value)} /></Field>
+          <Field label="Data da avaliação *" error={err.data}><input name="data" type="date" required className="input" /></Field>
+          <Field label="Altura (m)" error={err.altura}><input name="altura" inputMode="decimal" className="input" placeholder="1,75" value={altura} onChange={(e) => setAltura(e.target.value)} /></Field>
+          <Field label="Peso (kg)" error={err.peso}><input name="peso" inputMode="decimal" className="input" placeholder="70,0" value={peso} onChange={(e) => setPeso(e.target.value)} /></Field>
         </section>
 
         <section className="card">
           <h2 className="mb-3 font-semibold">Circunferências (cm)</h2>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
-            {CIRC.map((c) => <Field key={c} label={c}><input inputMode="decimal" className="input" /></Field>)}
+            {CIRC.map(([k, c]) => <Field key={k} label={c} error={err[k]}><input name={k} inputMode="decimal" className="input" /></Field>)}
           </div>
           <div className="mt-4 space-y-3">
-            {CIRC_LR.map((c) => (
-              <div key={c} className="grid grid-cols-[1fr_1fr_1fr] items-end gap-3 sm:max-w-md">
+            {CIRC_LR.map(([k, c]) => (
+              <div key={k} className="grid grid-cols-[1fr_1fr_1fr] items-end gap-3 sm:max-w-md">
                 <span className="pb-2 text-sm font-medium">{c}</span>
-                <Field label="Esq."><input inputMode="decimal" className="input" /></Field>
-                <Field label="Dir."><input inputMode="decimal" className="input" /></Field>
+                <Field label="Esq." error={err[k + 'Esq']}><input name={k + 'Esq'} inputMode="decimal" className="input" /></Field>
+                <Field label="Dir." error={err[k + 'Dir']}><input name={k + 'Dir'} inputMode="decimal" className="input" /></Field>
               </div>
             ))}
           </div>
@@ -71,26 +67,25 @@ export function AssessmentForm({ sexo, idade }: { sexo: Sexo; idade: number }) {
           <p className="mb-3 text-xs text-muted">Protocolo Pollock 7 dobras — preencha todas para calcular o % de gordura.</p>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             {DOBRAS.map(([k, label]) => (
-              <Field key={k} label={label}>
-                <input inputMode="decimal" className="input" value={dobras[k] ?? ''} onChange={(e) => setDobras({ ...dobras, [k]: e.target.value })} />
+              <Field key={k} label={label} error={err[dobraName(k)]}>
+                <input name={dobraName(k)} inputMode="decimal" className="input" value={dobras[k] ?? ''} onChange={(e) => setDobras({ ...dobras, [k]: e.target.value })} />
               </Field>
             ))}
           </div>
         </section>
 
         <section className="card">
-          <h2 className="mb-3 font-semibold">Fotos</h2>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-            {FOTOS.map((f) => (
-              <div key={f} className="grid aspect-[3/4] place-items-center rounded-xl border border-dashed border-border text-center text-xs text-muted">
-                <span>+ {f}</span>
-              </div>
+          <h2 className="mb-1 font-semibold">Fotos</h2>
+          <p className="mb-3 text-xs text-muted">Cole o link (URL) de cada foto.</p>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {FOTOS.map(([k, f]) => (
+              <Field key={k} label={f} error={err[k]}><input name={k} type="url" placeholder="https://…" className="input" /></Field>
             ))}
           </div>
         </section>
 
         <section className="card">
-          <Field label="Observações"><textarea rows={4} className="input" /></Field>
+          <Field label="Observações"><textarea name="observacoes" rows={4} className="input" /></Field>
         </section>
       </div>
 
@@ -107,7 +102,8 @@ export function AssessmentForm({ sexo, idade }: { sexo: Sexo; idade: number }) {
             <div><dt className="text-xs text-muted">M. gorda</dt><dd className="font-bold">{r.massaGorda ?? '—'}</dd></div>
             <div><dt className="text-xs text-muted">M. magra</dt><dd className="font-bold">{r.massaMagra ?? '—'}</dd></div>
           </dl>
-          <button className="btn w-full" type="submit">Salvar avaliação</button>
+          <FormMessage state={state} />
+          <button className="btn w-full disabled:opacity-60" type="submit" disabled={pending}>{pending ? 'Salvando…' : 'Salvar avaliação'}</button>
         </div>
       </aside>
     </form>

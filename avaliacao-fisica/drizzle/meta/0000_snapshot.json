@@ -1,0 +1,516 @@
+{
+  "id": "c1f4b39e-8656-4c3a-b385-abdc203c44f3",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.assessments": {
+      "name": "assessments",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "student_id": {
+          "name": "student_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "data": {
+          "name": "data",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "altura": {
+          "name": "altura",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "peso": {
+          "name": "peso",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "imc": {
+          "name": "imc",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "classificacao_imc": {
+          "name": "classificacao_imc",
+          "type": "classificacao_imc",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "circ_ombro": {
+          "name": "circ_ombro",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "circ_torax": {
+          "name": "circ_torax",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "circ_cintura": {
+          "name": "circ_cintura",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "circ_abdominal": {
+          "name": "circ_abdominal",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "circ_quadril": {
+          "name": "circ_quadril",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "circ_braco_normal_esq": {
+          "name": "circ_braco_normal_esq",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "circ_braco_normal_dir": {
+          "name": "circ_braco_normal_dir",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "circ_braco_contraido_esq": {
+          "name": "circ_braco_contraido_esq",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "circ_braco_contraido_dir": {
+          "name": "circ_braco_contraido_dir",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "circ_antebraco_esq": {
+          "name": "circ_antebraco_esq",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "circ_antebraco_dir": {
+          "name": "circ_antebraco_dir",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "circ_coxa_esq": {
+          "name": "circ_coxa_esq",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "circ_coxa_dir": {
+          "name": "circ_coxa_dir",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "circ_panturrilha_esq": {
+          "name": "circ_panturrilha_esq",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "circ_panturrilha_dir": {
+          "name": "circ_panturrilha_dir",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "dobra_triceps": {
+          "name": "dobra_triceps",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "dobra_peito": {
+          "name": "dobra_peito",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "dobra_axilar_media": {
+          "name": "dobra_axilar_media",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "dobra_subescapular": {
+          "name": "dobra_subescapular",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "dobra_abdominal": {
+          "name": "dobra_abdominal",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "dobra_supra_iliaca": {
+          "name": "dobra_supra_iliaca",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "dobra_coxa": {
+          "name": "dobra_coxa",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "massa_magra": {
+          "name": "massa_magra",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "massa_gorda": {
+          "name": "massa_gorda",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "percentual_gordura": {
+          "name": "percentual_gordura",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "foto_anterior": {
+          "name": "foto_anterior",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "foto_posterior": {
+          "name": "foto_posterior",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "foto_lado_esquerdo": {
+          "name": "foto_lado_esquerdo",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "foto_lado_direito": {
+          "name": "foto_lado_direito",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "observacoes": {
+          "name": "observacoes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "assessments_student_data_idx": {
+          "name": "assessments_student_data_idx",
+          "columns": [
+            {
+              "expression": "student_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "data",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "assessments_student_id_students_id_fk": {
+          "name": "assessments_student_id_students_id_fk",
+          "tableFrom": "assessments",
+          "tableTo": "students",
+          "columnsFrom": [
+            "student_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.students": {
+      "name": "students",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "nome": {
+          "name": "nome",
+          "type": "varchar(150)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "idade": {
+          "name": "idade",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sexo": {
+          "name": "sexo",
+          "type": "sexo",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "contato": {
+          "name": "contato",
+          "type": "varchar(30)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ja_treinou_antes": {
+          "name": "ja_treinou_antes",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "tempo_de_treino": {
+          "name": "tempo_de_treino",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "tempo_sem_atividade_fisica": {
+          "name": "tempo_sem_atividade_fisica",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "objetivo": {
+          "name": "objetivo",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "frequencia_semanal": {
+          "name": "frequencia_semanal",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "tempo_treino_por_dia": {
+          "name": "tempo_treino_por_dia",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "tem_doenca_ou_problema_saude": {
+          "name": "tem_doenca_ou_problema_saude",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "doenca_ou_problema_saude_detalhe": {
+          "name": "doenca_ou_problema_saude_detalhe",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "tem_limitacao_movimento": {
+          "name": "tem_limitacao_movimento",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "limitacao_movimento_detalhe": {
+          "name": "limitacao_movimento_detalhe",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "tem_dor_em_movimento": {
+          "name": "tem_dor_em_movimento",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "dor_em_movimento_detalhe": {
+          "name": "dor_em_movimento_detalhe",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "fez_cirurgias": {
+          "name": "fez_cirurgias",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "cirurgias_detalhe": {
+          "name": "cirurgias_detalhe",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "usa_medicamento_controlado": {
+          "name": "usa_medicamento_controlado",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "medicamento_controlado_detalhe": {
+          "name": "medicamento_controlado_detalhe",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "esta_fazendo_dieta": {
+          "name": "esta_fazendo_dieta",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "consome_alcool": {
+          "name": "consome_alcool",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "fuma": {
+          "name": "fuma",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "students_email_unique": {
+          "name": "students_email_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "email"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {
+    "public.classificacao_imc": {
+      "name": "classificacao_imc",
+      "schema": "public",
+      "values": [
+        "Abaixo do peso",
+        "Peso normal",
+        "Sobrepeso",
+        "Obesidade Grau I",
+        "Obesidade Grau II",
+        "Obesidade Grau III"
+      ]
+    },
+    "public.sexo": {
+      "name": "sexo",
+      "schema": "public",
+      "values": [
+        "masculino",
+        "feminino"
+      ]
+    }
+  },
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}
