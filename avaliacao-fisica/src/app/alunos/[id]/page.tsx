@@ -3,6 +3,9 @@ import { notFound } from 'next/navigation';
 import { ImcBadge } from '@/components/ImcBadge';
 import { connection } from 'next/server';
 import { DbError } from '@/components/DbError';
+import { DeleteButton } from '@/components/DeleteButton';
+import { EvolutionChart } from '@/components/EvolutionChart';
+import { deleteAssessment, deleteStudent } from '@/app/actions';
 import { getStudent, listAssessments } from '@/db/queries';
 import type { Assessment, Student } from '@/types';
 
@@ -44,6 +47,14 @@ export default async function AlunoPage(props: PageProps<'/alunos/[id]'>) {
   const delta = (a?: number | null, b?: number | null) =>
     a != null && b != null && list.length > 1 ? `${a - b > 0 ? '+' : ''}${(a - b).toFixed(1)}` : null;
 
+  const chrono = [...list].reverse();
+  const shortDate = new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: '2-digit', timeZone: 'UTC' });
+  const series = (pick: (a: Assessment) => number | null) =>
+    chrono.flatMap((a) => {
+      const v = pick(a);
+      return v === null ? [] : [{ label: shortDate.format(a.data), value: v }];
+    });
+
   const stats = [
     ['Peso', last?.peso, 'kg', delta(last?.peso, first?.peso)],
     ['IMC', last?.imc, '', delta(last?.imc, first?.imc)],
@@ -60,7 +71,11 @@ export default async function AlunoPage(props: PageProps<'/alunos/[id]'>) {
           <h1 className="text-2xl font-bold">{s.nome}</h1>
           <p className="text-sm text-muted">{s.idade} anos · {s.contato} · {s.email}</p>
         </div>
-        <Link href={`/alunos/${s.id}/avaliacoes/nova`} className="btn">+ Nova avaliação</Link>
+        <div className="flex flex-wrap gap-2">
+          <Link href={`/alunos/${s.id}/editar`} className="btn-ghost">Editar</Link>
+          <DeleteButton action={deleteStudent.bind(null, s.id)} confirmText={`Excluir ${s.nome} e todas as avaliações? Esta ação não pode ser desfeita.`}>Excluir aluno</DeleteButton>
+          <Link href={`/alunos/${s.id}/avaliacoes/nova`} className="btn">+ Nova avaliação</Link>
+        </div>
       </div>
 
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
@@ -73,6 +88,13 @@ export default async function AlunoPage(props: PageProps<'/alunos/[id]'>) {
         ))}
       </div>
 
+      {list.length > 1 && (
+        <div className="grid gap-4 md:grid-cols-2">
+          <EvolutionChart title="Peso" unit="kg" points={series((a) => a.peso)} />
+          <EvolutionChart title="% de gordura" unit="%" points={series((a) => a.composicao.percentualGordura)} />
+        </div>
+      )}
+
       <section className="card overflow-x-auto">
         <h2 className="mb-3 font-semibold">Histórico de avaliações</h2>
         {list.length === 0 ? (
@@ -80,7 +102,7 @@ export default async function AlunoPage(props: PageProps<'/alunos/[id]'>) {
         ) : (
           <table className="w-full min-w-[560px] text-sm">
             <thead className="text-left text-xs text-muted">
-              <tr><th className="pb-2">Data</th><th>Peso</th><th>IMC</th><th>Classificação</th><th>% Gordura</th><th>Massa magra</th></tr>
+              <tr className="[&_th]:pb-2"><th>Data</th><th>Peso</th><th>IMC</th><th>Classificação</th><th>% Gordura</th><th>Massa magra</th><th></th></tr>
             </thead>
             <tbody>
               {list.map((a) => (
@@ -89,6 +111,12 @@ export default async function AlunoPage(props: PageProps<'/alunos/[id]'>) {
                   <td>{a.peso} kg</td><td>{a.imc}</td>
                   <td><ImcBadge value={a.classificacaoImc} /></td>
                   <td>{a.composicao.percentualGordura}%</td><td>{a.composicao.massaMagra} kg</td>
+                  <td>
+                    <div className="flex items-center justify-end gap-3 py-1.5">
+                      <Link href={`/alunos/${s.id}/avaliacoes/${a.id}/editar`} className="text-xs font-medium text-accent hover:underline">Editar</Link>
+                      <DeleteButton action={deleteAssessment.bind(null, s.id, a.id)} confirmText="Excluir esta avaliação?">Excluir</DeleteButton>
+                    </div>
+                  </td>
                 </tr>
               ))}
             </tbody>

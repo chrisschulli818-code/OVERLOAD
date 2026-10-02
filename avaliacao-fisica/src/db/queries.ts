@@ -1,4 +1,4 @@
-import { desc, eq, ilike, or } from 'drizzle-orm';
+import { and, desc, eq, ilike, or } from 'drizzle-orm';
 import { db } from './index';
 import { assessments, students } from './schema';
 import type { Assessment, Student } from '@/types';
@@ -63,4 +63,13 @@ export async function getStudent(id: string): Promise<Student | null> {
 export async function listAssessments(studentId: string): Promise<Assessment[]> {
   const rows = await db.select().from(assessments).where(eq(assessments.studentId, studentId)).orderBy(desc(assessments.data));
   return rows.map(toAssessment);
+}
+
+export async function getAssessment(studentId: string, id: string): Promise<Assessment | null> {
+  if (!/^[0-9a-f-]{36}$/i.test(id)) return null;
+  const [row] = await db
+    .select()
+    .from(assessments)
+    .where(and(eq(assessments.id, id), eq(assessments.studentId, studentId)));
+  return row ? toAssessment(row) : null;
 }

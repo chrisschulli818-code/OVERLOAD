@@ -1,10 +1,11 @@
 'use client';
 
 import { useActionState, useMemo, useState } from 'react';
-import { createAssessment, type FormState } from '@/app/actions';
+import { createAssessment, updateAssessment, type FormState } from '@/app/actions';
 import { Field, FormMessage } from '@/components/FormParts';
 import { ImcBadge } from '@/components/ImcBadge';
-import type { DobrasCutaneas, Sexo } from '@/types';
+import { assessmentToFields } from '@/lib/assessmentFields';
+import type { Assessment, DobrasCutaneas, Sexo } from '@/types';
 import { calcularAvaliacao } from '@/utils/calculations';
 
 const num = (v: string): number | null => {
@@ -21,12 +22,20 @@ const DOBRAS: [keyof DobrasCutaneas, string][] = [
 const dobraName = (k: string) => 'dobra' + k[0].toUpperCase() + k.slice(1);
 const FOTOS: [string, string][] = [['fotoAnterior', 'Anterior'], ['fotoPosterior', 'Posterior'], ['fotoLadoEsquerdo', 'Lado esquerdo'], ['fotoLadoDireito', 'Lado direito']];
 
-export function AssessmentForm({ studentId, sexo, idade }: { studentId: string; sexo: Sexo; idade: number }) {
-  const [state, action, pending] = useActionState<FormState, FormData>(createAssessment.bind(null, studentId), {});
+export function AssessmentForm({
+  studentId, sexo, idade, initial,
+}: { studentId: string; sexo: Sexo; idade: number; initial?: Assessment }) {
+  const f = initial ? assessmentToFields(initial) : {};
+  const [state, action, pending] = useActionState<FormState, FormData>(
+    initial ? updateAssessment.bind(null, studentId, initial.id) : createAssessment.bind(null, studentId),
+    {},
+  );
   const err = state.errors ?? {};
-  const [altura, setAltura] = useState('');
-  const [peso, setPeso] = useState('');
-  const [dobras, setDobras] = useState<Record<string, string>>({});
+  const [altura, setAltura] = useState(f.altura ?? '');
+  const [peso, setPeso] = useState(f.peso ?? '');
+  const [dobras, setDobras] = useState<Record<string, string>>(
+    Object.fromEntries(DOBRAS.map(([k]) => [k, f[dobraName(k)] ?? ''])),
+  );
 
   const r = useMemo(
     () =>
@@ -41,7 +50,7 @@ export function AssessmentForm({ studentId, sexo, idade }: { studentId: string; 
     <form action={action} className="grid gap-6 lg:grid-cols-[1fr_320px]">
       <div className="space-y-6">
         <section className="card grid gap-4 sm:grid-cols-3">
-          <Field label="Data da avaliação *" error={err.data}><input name="data" type="date" required className="input" /></Field>
+          <Field label="Data da avaliação *" error={err.data}><input name="data" type="date" defaultValue={f.data} required className="input" /></Field>
           <Field label="Altura (m)" error={err.altura}><input name="altura" inputMode="decimal" className="input" placeholder="1,75" value={altura} onChange={(e) => setAltura(e.target.value)} /></Field>
           <Field label="Peso (kg)" error={err.peso}><input name="peso" inputMode="decimal" className="input" placeholder="70,0" value={peso} onChange={(e) => setPeso(e.target.value)} /></Field>
         </section>
@@ -49,14 +58,14 @@ export function AssessmentForm({ studentId, sexo, idade }: { studentId: string; 
         <section className="card">
           <h2 className="mb-3 font-semibold">Circunferências (cm)</h2>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
-            {CIRC.map(([k, c]) => <Field key={k} label={c} error={err[k]}><input name={k} inputMode="decimal" className="input" /></Field>)}
+            {CIRC.map(([k, c]) => <Field key={k} label={c} error={err[k]}><input name={k} defaultValue={f[k]} inputMode="decimal" className="input" /></Field>)}
           </div>
           <div className="mt-4 space-y-3">
             {CIRC_LR.map(([k, c]) => (
               <div key={k} className="grid grid-cols-[1fr_1fr_1fr] items-end gap-3 sm:max-w-md">
                 <span className="pb-2 text-sm font-medium">{c}</span>
-                <Field label="Esq." error={err[k + 'Esq']}><input name={k + 'Esq'} inputMode="decimal" className="input" /></Field>
-                <Field label="Dir." error={err[k + 'Dir']}><input name={k + 'Dir'} inputMode="decimal" className="input" /></Field>
+                <Field label="Esq." error={err[k + 'Esq']}><input name={k + 'Esq'} defaultValue={f[k + 'Esq']} inputMode="decimal" className="input" /></Field>
+                <Field label="Dir." error={err[k + 'Dir']}><input name={k + 'Dir'} defaultValue={f[k + 'Dir']} inputMode="decimal" className="input" /></Field>
               </div>
             ))}
           </div>
@@ -78,14 +87,14 @@ export function AssessmentForm({ studentId, sexo, idade }: { studentId: string; 
           <h2 className="mb-1 font-semibold">Fotos</h2>
           <p className="mb-3 text-xs text-muted">Cole o link (URL) de cada foto.</p>
           <div className="grid gap-3 sm:grid-cols-2">
-            {FOTOS.map(([k, f]) => (
-              <Field key={k} label={f} error={err[k]}><input name={k} type="url" placeholder="https://…" className="input" /></Field>
+            {FOTOS.map(([k, foto]) => (
+              <Field key={k} label={foto} error={err[k]}><input name={k} defaultValue={f[k]} type="url" placeholder="https://…" className="input" /></Field>
             ))}
           </div>
         </section>
 
         <section className="card">
-          <Field label="Observações"><textarea name="observacoes" rows={4} className="input" /></Field>
+          <Field label="Observações"><textarea name="observacoes" defaultValue={f.observacoes} rows={4} className="input" /></Field>
         </section>
       </div>
 
@@ -103,7 +112,7 @@ export function AssessmentForm({ studentId, sexo, idade }: { studentId: string; 
             <div><dt className="text-xs text-muted">M. magra</dt><dd className="font-bold">{r.massaMagra ?? '—'}</dd></div>
           </dl>
           <FormMessage state={state} />
-          <button className="btn w-full disabled:opacity-60" type="submit" disabled={pending}>{pending ? 'Salvando…' : 'Salvar avaliação'}</button>
+          <button className="btn w-full disabled:opacity-60" type="submit" disabled={pending}>{pending ? 'Salvando…' : initial ? 'Salvar alterações' : 'Salvar avaliação'}</button>
         </div>
       </aside>
     </form>
